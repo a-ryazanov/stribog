@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import { defineProps, computed } from 'vue';
+import { daytime } from '../lib';
 
 interface Props {
   updatedAt: Date | null;
 }
 
 const props = defineProps<Props>();
-const isUpdatedAtLeastOnce = computed(() => props.updatedAt !== null);
-const date = computed(() => {
-  const hours = props.updatedAt?.getHours();
-  const minutes = props.updatedAt?.getMinutes();
 
-  return `${hours}:${minutes}`;
-});
+const isUpdatedAtLeastOnce = computed(() => props.updatedAt !== null);
+const date = computed(() => daytime(props.updatedAt ?? new Date()));
 </script>
 
 <template>
-  <h2>{{ isUpdatedAtLeastOnce ? `Последнее обновление: ${date}` : 'Загрузка...' }}</h2>
+  <p class="lastUpdated__text">
+    {{ isUpdatedAtLeastOnce ? `Последнее обновление: ${date}` : 'Загрузка...' }}
+  </p>
 </template>
+
+<style scoped>
+.lastUpdated__text {
+  margin: 0;
+  font-size: 12px;
+  color: gray;
+}
+</style>

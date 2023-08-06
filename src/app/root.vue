@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { AzimuthChart } from '../features/metric-at-spot/azimuth';
+import { WindSpeedChart } from '../features/metric-at-spot/wind-speed';
+import { TemperatureChart } from '../features/metric-at-spot/temperature';
+import { VoltageChart } from '../features/metric-at-spot/voltage';
 import { SelectSpot, selectedSpot, useSpotMetrics } from '../entities/spot';
 import { LastUpdated } from '../shared/ui';
 
@@ -7,11 +11,19 @@ const { data, updatedAt } = useSpotMetrics(() => selectedSpot.id);
 
 <template>
   <main>
-    <LastUpdated :updated-at="updatedAt" />
-
     <SelectSpot :value="selectedSpot.id" @change="selectedSpot.set" />
 
-    {{ data }}
+    <LastUpdated :updated-at="updatedAt" />
+
+    <template v-if="data.length !== 0">
+      <AzimuthChart :metrics="data" />
+
+      <WindSpeedChart :metrics="data" />
+
+      <TemperatureChart :metrics="data" />
+
+      <VoltageChart :metrics="data" />
+    </template>
   </main>
 </template>
 
