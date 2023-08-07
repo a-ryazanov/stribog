@@ -1,6 +1,6 @@
 import { Spot, SpotMetrics } from './types.ts';
 
-const BASE_URL = 'https://cors-anywhere.herokuapp.com/http://193.124.125.33';
+const BASE_URL = 'http://193.124.125.33';
 
 export const fetchSpots = async (): Promise<Array<Spot>> => {
   return fetch(`${BASE_URL}/spots`, { method: 'get' })
