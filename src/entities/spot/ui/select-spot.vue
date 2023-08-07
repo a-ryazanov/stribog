@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, watch } from 'vue';
+import { watch } from 'vue';
 
 import { useSpots } from '../lib/use-spots.ts';
 
@@ -8,7 +8,7 @@ interface Props {
 }
 
 interface Emits {
-  change: [id: string];
+  (e: 'change', id: string): void;
 }
 
 const props = defineProps<Props>();
