@@ -8,13 +8,12 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const isUpdatedAtLeastOnce = computed(() => props.updatedAt !== null);
 const date = computed(() => daytime(props.updatedAt ?? new Date()));
 </script>
 
 <template>
   <p class="lastUpdated__text">
-    {{ isUpdatedAtLeastOnce ? `Последнее обновление: ${date}` : 'Загрузка...' }}
+    {{ `Последнее обновление: ${date}` }}
   </p>
 </template>
 
