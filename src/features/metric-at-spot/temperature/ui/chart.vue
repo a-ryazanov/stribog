@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import { Line } from 'vue-chartjs';
 
 import { SpotMetrics } from '../../../../shared/api';
-import { timeFromISODate } from '../../../../shared/lib';
+import { daytime } from '../../../../shared/lib';
 
 interface Props {
   metrics: Array<SpotMetrics>;
@@ -12,7 +12,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const chartData = computed(() => ({
-  labels: props.metrics.map((metric) => timeFromISODate(metric.time)),
+  labels: props.metrics.map((metric) => daytime(new Date(metric.time))),
   datasets: [
     {
       label: 'Температура воздуха',

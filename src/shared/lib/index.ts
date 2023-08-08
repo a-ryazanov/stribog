@@ -1,1 +1,1 @@
-export { daytime, timeFromISODate } from './date.ts';
+export { daytime } from './date.ts';
