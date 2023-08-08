@@ -34,13 +34,15 @@ const { data, updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id
         <VoltageChart :metrics="data" />
       </template>
 
-      <h3 v-else-if="state === 'done'">Нет данных</h3>
+      <h3 v-else-if="state === 'done'" class="app__noDataText">Нет данных</h3>
     </template>
   </main>
 </template>
 
 <style scoped>
 .app {
+  display: flex;
+  flex-direction: column;
   margin: 12px 20px;
 }
 
@@ -59,5 +61,9 @@ const { data, updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id
   margin: 0;
   font-size: 12px;
   color: gray;
+}
+
+.app__noDataText {
+  align-self: center;
 }
 </style>
