@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { AzimuthChart } from '../features/metric-at-spot/azimuth';
-import { WindSpeedChart } from '../features/metric-at-spot/wind-speed';
-import { TemperatureChart } from '../features/metric-at-spot/temperature';
-import { VoltageChart } from '../features/metric-at-spot/voltage';
-import { SelectSpot, selectedSpot, useSpotMetrics } from '../entities/spot';
-import { LastUpdated } from '../shared/ui';
+import { markRaw, computed, Component } from 'vue';
 
-const { data, updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id);
+import { Dashboard } from '../widgets/dashboard';
+import { Table } from '../widgets/table';
+import { SelectSpot, selectedSpot, useSpotMetrics } from '../entities/spot';
+import { LastUpdated, Tabs, TabView } from '../shared/ui';
+
+const { updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id);
+const dataIsNotEmpty = computed(() => selectedSpot.metrics.length !== 0);
+
+const tabsViews: Array<TabView> = [
+  { name: 'chart', title: 'График', component: markRaw<Component>(Dashboard) },
+  { name: 'table', title: 'Таблица', component: markRaw<Component>(Table) },
+];
 </script>
 
 <template>
@@ -24,15 +30,7 @@ const { data, updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id
     <template v-else>
       <LastUpdated :updated-at="updatedAt" />
 
-      <template v-if="data.length !== 0">
-        <AzimuthChart :metrics="data" />
-
-        <WindSpeedChart :metrics="data" />
-
-        <TemperatureChart :metrics="data" />
-
-        <VoltageChart :metrics="data" />
-      </template>
+      <Tabs v-if="dataIsNotEmpty" :tabs="tabsViews" class="app__tabs" />
 
       <h3 v-else-if="state === 'done'" class="app__noDataText">Нет данных</h3>
     </template>
@@ -50,6 +48,10 @@ const { data, updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.app__tabs {
+  margin-top: 12px;
 }
 
 .appControls__select {

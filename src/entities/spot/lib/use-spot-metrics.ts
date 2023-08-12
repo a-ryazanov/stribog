@@ -1,9 +1,9 @@
 import { ref, watchEffect, toValue, ComputedGetter } from 'vue';
 
-import { fetchMetrics, SpotMetrics } from '../../../shared/api';
+import { fetchMetrics } from '../../../shared/api';
+import { selectedSpot } from '../model';
 
 export function useSpotMetrics(id: ComputedGetter<string | null>) {
-  const data = ref<Array<SpotMetrics>>([]);
   const error = ref(null);
   const state = ref<'pending' | 'idle' | 'done'>('idle');
   const updatedAt = ref<Date | null>(null);
@@ -12,13 +12,13 @@ export function useSpotMetrics(id: ComputedGetter<string | null>) {
     const rawId = toValue(id);
 
     if (rawId !== null) {
-      data.value = [];
       error.value = null;
       state.value = 'pending';
 
       fetchMetrics(rawId)
         .then((metrics) => {
-          data.value = metrics;
+          selectedSpot.setMetrics(metrics);
+
           updatedAt.value = new Date();
         })
         .catch((error) => (error.value = error))
@@ -28,5 +28,5 @@ export function useSpotMetrics(id: ComputedGetter<string | null>) {
 
   watchEffect(fetchData);
 
-  return { data, error, state, updatedAt, refetch: fetchData };
+  return { error, state, updatedAt, refetch: fetchData };
 }
