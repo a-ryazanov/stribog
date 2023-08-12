@@ -10,6 +10,11 @@
   -webkit-text-size-adjust: 100%;
 }
 
+html {
+  margin-left: calc(100vw - 100%);
+  margin-right: 0;
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -44,3 +49,4 @@ button:focus-visible {
   width: 100%;
   max-width: 464px;
 }
+
