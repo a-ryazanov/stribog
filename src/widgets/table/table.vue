@@ -9,14 +9,13 @@ import ArrowIcon from './arrow.svg';
   <table class="table">
     <tr>
       <th>Время</th>
-      <th>Температура</th>
       <th>Ветер</th>
-      <th>Напряжение</th>
+      <th>t°</th>
+      <th>U</th>
     </tr>
 
     <tr v-for="item in selectedSpot.metrics" :key="item.time">
       <td>{{ daytime(new Date(item.time)) }}</td>
-      <td>{{ `${item.temperature}°C` }}</td>
       <td class="table__windSpeed">
         <ArrowIcon
           class="table__arrowIcon"
@@ -25,7 +24,8 @@ import ArrowIcon from './arrow.svg';
 
         {{ `${item.windSpeed}м/с` }}
       </td>
-      <td>{{ `${item.voltage}В` }}</td>
+      <td>{{ `${item.temperature}°C` }}</td>
+      <td>{{ `${item.voltage}V` }}</td>
     </tr>
   </table>
 </template>
@@ -35,10 +35,20 @@ import ArrowIcon from './arrow.svg';
   width: 100%;
   margin-top: 1em;
   text-align: center;
+  vertical-align: middle;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+}
+
+.table td,
+.table th {
+  padding: 4px 0;
+  border-bottom: 1px solid rgb(239, 239, 239);
 }
 
 .table__windSpeed {
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 

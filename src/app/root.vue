@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { markRaw, computed, Component } from 'vue';
+import { markRaw, computed, type Component } from 'vue';
 
 import { Dashboard } from '../widgets/dashboard';
 import { Table } from '../widgets/table';
@@ -57,6 +57,10 @@ const tabsViews: Array<TabView> = [
 .appControls__select {
   flex: 1 0 auto;
   margin-right: 12px;
+}
+
+.appStatus__button {
+  font-size: 12px;
 }
 
 .app__pendingText {

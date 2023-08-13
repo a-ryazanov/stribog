@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, Component } from 'vue';
+import { ref, type Component } from 'vue';
 
 export interface TabView {
   name: string;
