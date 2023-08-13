@@ -3,6 +3,7 @@ import { markRaw, computed, type Component } from 'vue';
 
 import { Dashboard } from '../widgets/dashboard';
 import { Table } from '../widgets/table';
+import { Description } from '../widgets/description';
 import { SelectSpot, selectedSpot, useSpotMetrics } from '../entities/spot';
 import { LastUpdated, Tabs, TabView } from '../shared/ui';
 
@@ -10,6 +11,7 @@ const { updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id);
 const dataIsNotEmpty = computed(() => selectedSpot.metrics.length !== 0);
 
 const tabsViews: Array<TabView> = [
+  { name: 'description', title: 'Описание', component: markRaw<Component>(Description) },
   { name: 'chart', title: 'График', component: markRaw<Component>(Dashboard) },
   { name: 'table', title: 'Таблица', component: markRaw<Component>(Table) },
 ];
