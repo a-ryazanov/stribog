@@ -43,6 +43,9 @@ import ArrowIcon from './arrow.svg';
 .table td,
 .table th {
   padding: 4px 0;
+}
+
+.table tr:not(:last-child) td {
   border-bottom: 1px solid rgb(239, 239, 239);
 }
 

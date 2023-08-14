@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Component } from 'vue';
+import { ref, KeepAlive, type Component } from 'vue';
 
 export interface TabView {
   name: string;
@@ -18,30 +18,42 @@ const activeTab = ref(props.tabs[0]);
 
 <template>
   <section>
-    <header>
-      <button
-        v-for="tab in tabs"
-        :key="tab.name"
-        :disabled="activeTab.name === tab.name"
-        :style="{ width: `${100 / tabs.length}%` }"
-        @click="() => (activeTab = tab)"
-        class="tabs__button"
-        type="button"
-      >
-        {{ tab.title }}
-      </button>
+    <header class="tabs__header">
+      <template v-for="(tab, index) in tabs" :key="tab.name">
+        <button
+          :disabled="activeTab.name === tab.name"
+          :class="{ tabs__button_selected: activeTab.name === tab.name }"
+          :style="{ width: `${100 / tabs.length}%` }"
+          @click="() => (activeTab = tab)"
+          class="tabs__button"
+          type="button"
+        >
+          {{ tab.title }}
+        </button>
+
+        <div v-if="index !== tabs.length - 1" class="tabs__separator" />
+      </template>
     </header>
 
-    <section>
+    <KeepAlive>
       <component :is="activeTab.component" />
-    </section>
+    </KeepAlive>
   </section>
 </template>
 
 <style scoped>
+.tabs__header {
+  display: flex;
+}
+
 .tabs__button {
   border-radius: 0;
   font-size: 12px;
+}
+
+.tabs__button_selected {
+  color: #ffffff;
+  background-color: rgb(75, 192, 192);
 }
 
 .tabs__button:nth-of-type(1) {
@@ -52,5 +64,11 @@ const activeTab = ref(props.tabs[0]);
 .tabs__button:nth-last-of-type(1) {
   border-bottom-right-radius: 4px;
   border-top-right-radius: 4px;
+}
+
+.tabs__separator {
+  width: 1px;
+  height: 24px;
+  color: #ffffff;
 }
 </style>

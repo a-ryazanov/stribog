@@ -60,5 +60,7 @@ const handleChange = (event: Event) => {
   width: 100%;
   height: 24px;
   margin-left: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
 }
 </style>
