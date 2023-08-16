@@ -4,15 +4,18 @@ import { AzimuthChart } from '../../features/metric-at-spot/azimuth';
 import { WindSpeedChart } from '../../features/metric-at-spot/wind-speed';
 import { TemperatureChart } from '../../features/metric-at-spot/temperature';
 import { selectedSpot, useSpotMetrics } from '../../entities/spot';
+import { LastUpdated } from '../../shared/ui';
 
-const { state } = useSpotMetrics(() => selectedSpot.id);
+const { state, updatedAt } = useSpotMetrics(() => selectedSpot.id);
 </script>
 
 <template>
   <section class="dashboard">
     <p v-if="state === 'pending'" class="dashboard__pendingText">Загрузка...</p>
 
-    <section v-else-if="selectedSpot.metrics.length !== 0" class="dashboard__content">
+    <template v-else-if="selectedSpot.metrics.length !== 0">
+      <LastUpdated :updatedAt="updatedAt" />
+
       <AzimuthChart :metrics="selectedSpot.metrics" />
 
       <WindSpeedChart :metrics="selectedSpot.metrics" />
@@ -20,7 +23,7 @@ const { state } = useSpotMetrics(() => selectedSpot.id);
       <TemperatureChart :metrics="selectedSpot.metrics" />
 
       <VoltageChart :metrics="selectedSpot.metrics" />
-    </section>
+    </template>
 
     <h3 v-else-if="state === 'done'" class="dashboard__noDataText">Нет данных</h3>
   </section>
@@ -31,10 +34,6 @@ const { state } = useSpotMetrics(() => selectedSpot.id);
   display: flex;
   flex-direction: column;
   margin-top: 1em;
-}
-
-.dashboard__content {
-  margin-top: -1em;
 }
 
 .dashboard__pendingText {

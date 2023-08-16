@@ -3,8 +3,14 @@ import { ref, watchEffect, toValue, onActivated, onDeactivated, ComputedGetter }
 import { fetchMetrics } from '../../../shared/api';
 import { selectedSpot } from '../model';
 
-export function useSpotMetrics(id: ComputedGetter<string | null>) {
-  const error = ref(null);
+interface Options {
+  immediate?: boolean;
+}
+
+export function useSpotMetrics(
+  id: ComputedGetter<string | null>,
+  { immediate }: Options = { immediate: true },
+) {
   const state = ref<'pending' | 'idle' | 'done'>('idle');
   const updatedAt = ref<Date | null>(null);
 
@@ -14,7 +20,6 @@ export function useSpotMetrics(id: ComputedGetter<string | null>) {
     const rawId = toValue(id);
 
     if (rawId !== null) {
-      error.value = null;
       state.value = 'pending';
 
       await fetchMetrics(rawId, controller.signal)
@@ -23,7 +28,6 @@ export function useSpotMetrics(id: ComputedGetter<string | null>) {
 
           updatedAt.value = new Date();
         })
-        .catch((error) => (error.value = error))
         .finally(() => {
           state.value = 'done';
           controller = new AbortController();
@@ -32,13 +36,13 @@ export function useSpotMetrics(id: ComputedGetter<string | null>) {
   };
 
   watchEffect(async () => {
-    if (selectedSpot.metrics.length === 0) {
+    if (selectedSpot.metrics.length === 0 && immediate) {
       await fetchData();
     }
   });
 
   onActivated(async () => {
-    if (selectedSpot.metrics.length === 0 && state.value !== 'pending') {
+    if (selectedSpot.metrics.length === 0 && state.value !== 'pending' && immediate) {
       await fetchData();
     }
   });
@@ -48,12 +52,8 @@ export function useSpotMetrics(id: ComputedGetter<string | null>) {
   });
 
   return {
-    error,
     state,
-    refetch: async () => {
-      selectedSpot.setMetrics([]);
-
-      await fetchData();
-    },
+    updatedAt,
+    refetch: fetchData,
   };
 }

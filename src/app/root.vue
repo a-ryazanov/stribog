@@ -4,8 +4,10 @@ import { markRaw, type Component } from 'vue';
 import { Dashboard } from '../widgets/dashboard';
 import { Table } from '../widgets/table';
 import { Details } from '../widgets/details';
+import { RefreshButton } from '../features/refresh-data';
 import { SelectSpot, selectedSpot } from '../entities/spot';
 import { Tabs, TabView } from '../shared/ui';
+import { globalFetch } from '../shared/api';
 
 const tabsViews: Array<TabView> = [
   { name: 'details', title: 'Описание', component: markRaw<Component>(Details) },
@@ -16,15 +18,18 @@ const tabsViews: Array<TabView> = [
 
 <template>
   <main class="app">
-    <section class="app__controls">
+    <header class="app__controls">
       <SelectSpot class="appControls__select" :value="selectedSpot.id" @change="selectedSpot.set" />
 
-      <button @click="refetch" :disabled="state !== 'done'" class="appStatus__button" type="button">
-        Обновить
-      </button>
-    </section>
+      <RefreshButton />
+    </header>
 
     <Tabs :tabs="tabsViews" class="app__tabs" />
+
+    <footer v-if="globalFetch.state !== 'pending'" class="app__footer">
+      Мы не гарантируем достоверность информации, так как используем усредненные значения измерений.
+      Оценивайте риски, исходя из собственных наблюдений!
+    </footer>
   </main>
 </template>
 
@@ -50,7 +55,13 @@ const tabsViews: Array<TabView> = [
   margin-right: 12px;
 }
 
-.appStatus__button {
+.app__footer {
+  margin-top: 2em;
+  padding: 12px;
+  border: 1px solid #91caff;
+  border-radius: 4px;
   font-size: 12px;
+  text-align: justify;
+  background-color: #e6f4ff;
 }
 </style>

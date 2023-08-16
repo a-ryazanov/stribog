@@ -2,10 +2,15 @@ import { ref, watchEffect, toValue, onActivated, onDeactivated, ComputedGetter }
 
 import { fetchDetails, SpotDetails } from '../../../shared/api';
 
-export function useSpotDetails(id: ComputedGetter<string | null>) {
+interface Options {
+  immediate?: boolean;
+}
+export function useSpotDetails(
+  id: ComputedGetter<string | null>,
+  { immediate }: Options = { immediate: true },
+) {
   const data = ref<SpotDetails | null>(null);
   const state = ref<'pending' | 'idle' | 'done'>('idle');
-  const error = ref(null);
 
   let controller = new AbortController();
 
@@ -14,14 +19,12 @@ export function useSpotDetails(id: ComputedGetter<string | null>) {
 
     if (rawId !== null) {
       data.value = null;
-      error.value = null;
       state.value = 'pending';
 
       await fetchDetails(rawId, controller.signal)
         .then((details) => {
           data.value = details;
         })
-        .catch((error) => (error.value = error))
         .finally(() => {
           state.value = 'done';
           controller = new AbortController();
@@ -29,10 +32,14 @@ export function useSpotDetails(id: ComputedGetter<string | null>) {
     }
   };
 
-  watchEffect(fetchData);
+  watchEffect(async () => {
+    if (immediate) {
+      await fetchData();
+    }
+  });
 
   onActivated(async () => {
-    if (data.value === null && state.value !== 'pending') {
+    if (data.value === null && state.value !== 'pending' && immediate) {
       await fetchData();
     }
   });
@@ -43,7 +50,6 @@ export function useSpotDetails(id: ComputedGetter<string | null>) {
 
   return {
     data,
-    error,
     state,
     refetch: fetchData,
   };

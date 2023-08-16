@@ -14,4 +14,7 @@ export default defineConfig({
       filename: 'stats.html',
     }),
   ],
+  css: {
+    transformer: 'lightningcss',
+  },
 });
