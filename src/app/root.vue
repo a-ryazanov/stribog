@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { markRaw, computed, type Component } from 'vue';
+import { markRaw, type Component } from 'vue';
 
 import { Dashboard } from '../widgets/dashboard';
 import { Table } from '../widgets/table';
-import { Description } from '../widgets/description';
-import { SelectSpot, selectedSpot, useSpotMetrics } from '../entities/spot';
-import { LastUpdated, Tabs, TabView } from '../shared/ui';
-
-const { updatedAt, refetch, state } = useSpotMetrics(() => selectedSpot.id);
-const dataIsNotEmpty = computed(() => selectedSpot.metrics.length !== 0);
+import { Details } from '../widgets/details';
+import { SelectSpot, selectedSpot } from '../entities/spot';
+import { Tabs, TabView } from '../shared/ui';
 
 const tabsViews: Array<TabView> = [
-  { name: 'description', title: 'Описание', component: markRaw<Component>(Description) },
+  { name: 'details', title: 'Описание', component: markRaw<Component>(Details) },
   { name: 'chart', title: 'График', component: markRaw<Component>(Dashboard) },
   { name: 'table', title: 'Таблица', component: markRaw<Component>(Table) },
 ];
@@ -27,15 +24,7 @@ const tabsViews: Array<TabView> = [
       </button>
     </section>
 
-    <p v-if="state !== 'done'" class="app__pendingText">Загрузка...</p>
-
-    <template v-else>
-      <LastUpdated :updated-at="updatedAt" />
-
-      <Tabs v-if="dataIsNotEmpty" :tabs="tabsViews" class="app__tabs" />
-
-      <h3 v-else-if="state === 'done'" class="app__noDataText">Нет данных</h3>
-    </template>
+    <Tabs :tabs="tabsViews" class="app__tabs" />
   </main>
 </template>
 
@@ -63,15 +52,5 @@ const tabsViews: Array<TabView> = [
 
 .appStatus__button {
   font-size: 12px;
-}
-
-.app__pendingText {
-  margin: 0;
-  font-size: 12px;
-  color: gray;
-}
-
-.app__noDataText {
-  align-self: center;
 }
 </style>

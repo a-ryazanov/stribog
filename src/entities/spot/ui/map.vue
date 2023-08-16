@@ -1,32 +1,37 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 
-import { selectedSpot } from '../model';
+import { SpotSafetyLine } from '../../../shared/api';
 import { spotMaps } from '../lib/spot-maps.ts';
 import { canvasFactory, contextFactory, drawMap } from '../lib/canvas.ts';
 
-const mapImage = computed<string | null>(() =>
-  selectedSpot.id !== null && selectedSpot.id in spotMaps ? spotMaps[selectedSpot.id] : null,
-);
+interface Props {
+  id: string;
+  lines: Array<SpotSafetyLine>;
+}
+
+const props = defineProps<Props>();
+
+const mapImage = computed<string>(() => spotMaps[props.id]);
 
 onMounted(() => {
   const canvas = canvasFactory('spot-map');
   const context = contextFactory(canvas);
   const image = new Image();
 
-  if (typeof mapImage.value === 'string' && context !== null) {
+  if (context !== null) {
     image.src = mapImage.value;
-    image.onload = () => drawMap({ canvas, context, image });
+    image.onload = () => drawMap({ canvas, context, image, lines: props.lines });
   }
 });
 </script>
 
 <template>
-  <canvas v-if="mapImage !== null" id="spot-map" class="map" />
+  <canvas id="spot-map" class="spotMap" />
 </template>
 
 <style scoped>
-.map {
+.spotMap {
   width: 100%;
   max-width: 424px;
   border-radius: 4px;

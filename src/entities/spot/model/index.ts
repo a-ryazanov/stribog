@@ -14,6 +14,7 @@ export const selectedSpot = reactive<SelectedSpotStore>({
   metrics: [],
   set(id: string) {
     selectedSpot.id = id;
+    selectedSpot.metrics = [];
   },
   setMetrics(metrics: Array<SpotMetrics>) {
     selectedSpot.metrics = metrics;
