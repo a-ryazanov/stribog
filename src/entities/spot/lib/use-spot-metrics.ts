@@ -12,7 +12,6 @@ export function useSpotMetrics(
   { immediate }: Options = { immediate: true },
 ) {
   const state = ref<'pending' | 'idle' | 'done'>('idle');
-  const updatedAt = ref<Date | null>(null);
 
   let controller = new AbortController();
 
@@ -26,7 +25,7 @@ export function useSpotMetrics(
         .then((metrics) => {
           selectedSpot.setMetrics(metrics);
 
-          updatedAt.value = new Date();
+          selectedSpot.setUpdatedAt(new Date());
         })
         .finally(() => {
           state.value = 'done';
@@ -53,7 +52,6 @@ export function useSpotMetrics(
 
   return {
     state,
-    updatedAt,
     refetch: fetchData,
   };
 }

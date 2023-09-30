@@ -4,10 +4,10 @@ import { AzimuthChart } from '../../features/metric-at-spot/azimuth';
 import { WindSpeedChart } from '../../features/metric-at-spot/wind-speed';
 import { TemperatureChart } from '../../features/metric-at-spot/temperature';
 import { PressureChart } from '../../features/metric-at-spot/pressure';
+import { LastUpdated } from '../../features/refresh-data';
 import { selectedSpot, useSpotMetrics } from '../../entities/spot';
-import { LastUpdated } from '../../shared/ui';
 
-const { state, updatedAt } = useSpotMetrics(() => selectedSpot.id);
+const { state } = useSpotMetrics(() => selectedSpot.id);
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const { state, updatedAt } = useSpotMetrics(() => selectedSpot.id);
     <p v-if="state === 'pending'" class="dashboard__pendingText">Загрузка...</p>
 
     <template v-else-if="selectedSpot.metrics.length !== 0">
-      <LastUpdated :updatedAt="updatedAt" />
+      <LastUpdated :updatedAt="selectedSpot.updatedAt" />
 
       <AzimuthChart :metrics="selectedSpot.metrics" />
 

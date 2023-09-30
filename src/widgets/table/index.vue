@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { LastUpdated } from '../../features/refresh-data';
 import { selectedSpot, useSpotMetrics } from '../../entities/spot';
-import { LastUpdated } from '../../shared/ui';
 
 import SpotTable from './ui/table.vue';
 
-const { state, updatedAt } = useSpotMetrics(() => selectedSpot.id);
+const { state } = useSpotMetrics(() => selectedSpot.id);
 </script>
 
 <template>
@@ -12,7 +12,7 @@ const { state, updatedAt } = useSpotMetrics(() => selectedSpot.id);
     <p v-if="state === 'pending'" class="table__pendingText">Загрузка...</p>
 
     <template v-else-if="selectedSpot.metrics.length !== 0">
-      <LastUpdated :updatedAt="updatedAt" class="tableSection__updatedAt" />
+      <LastUpdated :updatedAt="selectedSpot.updatedAt" class="tableSection__updatedAt" />
 
       <SpotTable />
     </template>
