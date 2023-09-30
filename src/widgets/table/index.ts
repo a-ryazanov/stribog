@@ -1,3 +1,3 @@
-import Table from './table.vue';
+import Table from './index.vue';
 
 export { Table };

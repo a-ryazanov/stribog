@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { SpotTable } from '../../features/metric-at-spot/table';
 import { selectedSpot, useSpotMetrics } from '../../entities/spot';
 import { LastUpdated } from '../../shared/ui';
+
+import SpotTable from './ui/table.vue';
 
 const { state, updatedAt } = useSpotMetrics(() => selectedSpot.id);
 </script>

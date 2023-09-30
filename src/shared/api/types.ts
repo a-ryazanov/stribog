@@ -9,6 +9,7 @@ export interface SpotMetrics {
   azimuth: number;
   temperature: number;
   voltage: number;
+  pressure: number;
 }
 
 export enum SpotSafetyLineStatus {

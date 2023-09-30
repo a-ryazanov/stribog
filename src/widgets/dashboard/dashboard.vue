@@ -3,6 +3,7 @@ import { VoltageChart } from '../../features/metric-at-spot/voltage';
 import { AzimuthChart } from '../../features/metric-at-spot/azimuth';
 import { WindSpeedChart } from '../../features/metric-at-spot/wind-speed';
 import { TemperatureChart } from '../../features/metric-at-spot/temperature';
+import { PressureChart } from '../../features/metric-at-spot/pressure';
 import { selectedSpot, useSpotMetrics } from '../../entities/spot';
 import { LastUpdated } from '../../shared/ui';
 
@@ -23,6 +24,8 @@ const { state, updatedAt } = useSpotMetrics(() => selectedSpot.id);
       <TemperatureChart :metrics="selectedSpot.metrics" />
 
       <VoltageChart :metrics="selectedSpot.metrics" />
+
+      <PressureChart :metrics="selectedSpot.metrics" />
     </template>
 
     <h3 v-else-if="state === 'done'" class="dashboard__noDataText">Нет данных</h3>

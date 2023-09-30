@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { selectedSpot } from '../../../../entities/spot';
-import { daytime } from '../../../../shared/lib';
+import { selectedSpot } from '../../../entities/spot';
+import { daytime } from '../../../shared/lib';
 
 import ArrowIcon from './arrow.svg';
 </script>
@@ -12,6 +12,7 @@ import ArrowIcon from './arrow.svg';
       <th>Ветер</th>
       <th>t°</th>
       <th>U</th>
+      <th>p</th>
     </tr>
 
     <tr v-for="item in selectedSpot.metrics" :key="item.time">
@@ -26,6 +27,7 @@ import ArrowIcon from './arrow.svg';
       </td>
       <td>{{ `${item.temperature}°C` }}</td>
       <td>{{ `${item.voltage}V` }}</td>
+      <td>{{ `${item.pressure} мм.рт.ст.` }}</td>
     </tr>
   </table>
 </template>
