@@ -1,34 +1,41 @@
 <script setup lang="ts">
-import { SpotMap, SpotDescription, useSpotDetails, selectedSpot } from '../../entities/spot';
+import {
+  SpotMap,
+  SpotDescription,
+  useSpotDetails,
+  selectedSpot,
+  TabLayout,
+} from '../../entities/spot';
 
-const { data, state } = useSpotDetails(() => selectedSpot.id);
+const { state } = useSpotDetails();
 </script>
 
 <template>
-  <section class="details">
-    <p v-if="state !== 'done'" class="details__pendingText">Загрузка...</p>
+  <TabLayout :loading="state === 'pending'" :empty="selectedSpot.details === null">
+    <SpotDescription :text="selectedSpot.details!.description" />
 
-    <template v-if="data !== null">
-      <SpotDescription :text="data.description" />
+    <SpotMap
+      v-if="selectedSpot.id !== null"
+      :id="selectedSpot.id"
+      :lines="selectedSpot.details!.safetyLines"
+      class="mapWidget"
+    />
 
-      <SpotMap
-        v-if="selectedSpot.id !== null"
-        :id="selectedSpot.id"
-        :lines="data.safetyLines"
-        class="mapWidget"
-      />
-    </template>
-  </section>
+    <section class="details__footer">
+      Мы не гарантируем достоверность информации, так как используем усредненные значения измерений.
+      Оценивайте риски, исходя из собственных наблюдений!
+    </section>
+  </TabLayout>
 </template>
 
 <style scoped>
-.details {
-  margin-top: 1em;
-}
-
-.details__pendingText {
-  margin: 0;
+.details__footer {
+  margin-top: 2em;
+  padding: 12px;
+  border: 1px solid #91caff;
+  border-radius: 4px;
   font-size: 12px;
-  color: #8c8c8c;
+  text-align: justify;
+  background-color: #e6f4ff;
 }
 </style>

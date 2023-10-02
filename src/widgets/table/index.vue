@@ -1,44 +1,25 @@
 <script setup lang="ts">
 import { LastUpdated } from '../../features/refresh-data';
-import { selectedSpot, useSpotMetrics } from '../../entities/spot';
+import { selectedSpot, useSpotMetrics, TabLayout } from '../../entities/spot';
 
 import SpotTable from './ui/table.vue';
 
-const { state } = useSpotMetrics(() => selectedSpot.id);
+useSpotMetrics();
 </script>
 
 <template>
-  <section class="tableSection">
-    <p v-if="state === 'pending'" class="table__pendingText">Загрузка...</p>
+  <TabLayout
+    :loading="selectedSpot.loadingState === 'pending'"
+    :empty="selectedSpot.metrics.length === 0"
+  >
+    <LastUpdated :updatedAt="selectedSpot.updatedAt" class="tableSection__updatedAt" />
 
-    <template v-else-if="selectedSpot.metrics.length !== 0">
-      <LastUpdated :updatedAt="selectedSpot.updatedAt" class="tableSection__updatedAt" />
-
-      <SpotTable />
-    </template>
-
-    <h3 v-else-if="state === 'done'" class="table__noDataText">Нет данных</h3>
-  </section>
+    <SpotTable />
+  </TabLayout>
 </template>
 
 <style scoped>
-.tableSection {
-  display: flex;
-  flex-direction: column;
-  margin-top: 1em;
-}
-
 .tableSection__updatedAt {
   margin-bottom: 1em;
-}
-
-.table__pendingText {
-  margin: 0;
-  font-size: 12px;
-  color: #8c8c8c;
-}
-
-.table__noDataText {
-  align-self: center;
 }
 </style>

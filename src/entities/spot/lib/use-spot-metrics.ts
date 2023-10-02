@@ -1,57 +1,25 @@
-import { ref, watchEffect, toValue, onActivated, onDeactivated, ComputedGetter } from 'vue';
+import { onActivated, onDeactivated } from 'vue';
 
-import { fetchMetrics } from '../../../shared/api';
 import { selectedSpot } from '../model';
 
-interface Options {
-  immediate?: boolean;
-}
-
-export function useSpotMetrics(
-  id: ComputedGetter<string | null>,
-  { immediate }: Options = { immediate: true },
-) {
-  const state = ref<'pending' | 'idle' | 'done'>('idle');
-
+export function useSpotMetrics() {
   let controller = new AbortController();
 
   const fetchData = async (): Promise<void> => {
-    const rawId = toValue(id);
-
-    if (rawId !== null) {
-      state.value = 'pending';
-
-      await fetchMetrics(rawId, controller.signal)
-        .then((metrics) => {
-          selectedSpot.setMetrics(metrics);
-
-          selectedSpot.setUpdatedAt(new Date());
-        })
-        .finally(() => {
-          state.value = 'done';
-          controller = new AbortController();
-        });
-    }
+    await selectedSpot.fetchMetrics(controller.signal).finally(() => {
+      controller = new AbortController();
+    });
   };
 
-  watchEffect(async () => {
-    if (selectedSpot.metrics.length === 0 && immediate) {
-      await fetchData();
-    }
-  });
-
   onActivated(async () => {
-    if (selectedSpot.metrics.length === 0 && state.value !== 'pending' && immediate) {
+    if (selectedSpot.metrics.length === 0) {
       await fetchData();
     }
   });
 
   onDeactivated(() => {
-    controller.abort();
+    if (selectedSpot.loadingState === 'pending') {
+      controller.abort();
+    }
   });
-
-  return {
-    state,
-    refetch: fetchData,
-  };
 }

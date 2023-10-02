@@ -8,11 +8,11 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const date = computed(() => daytime(props.updatedAt ?? new Date()));
+const date = computed(() => (props.updatedAt ? daytime(props.updatedAt) : null));
 </script>
 
 <template>
-  <p class="lastUpdated__text">
+  <p v-if="date !== null" class="lastUpdated__text">
     {{ `Последнее обновление: ${date}` }}
   </p>
 </template>

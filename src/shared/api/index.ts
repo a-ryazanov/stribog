@@ -21,7 +21,7 @@ export const fetchSpots = async (): Promise<Array<Spot>> => {
 
 export const fetchMetrics = async (
   id: string,
-  signal: AbortSignal,
+  signal?: AbortSignal,
 ): Promise<Array<SpotMetrics>> => {
   globalFetch.setState('pending');
 
@@ -34,7 +34,7 @@ export const fetchMetrics = async (
     });
 };
 
-export const fetchDetails = async (id: string, signal: AbortSignal): Promise<SpotDetails> => {
+export const fetchDetails = async (id: string, signal?: AbortSignal): Promise<SpotDetails> => {
   globalFetch.setState('pending');
 
   return fetch(`${BASE_URL}/spots/${id}/details`, { method: 'get', signal })

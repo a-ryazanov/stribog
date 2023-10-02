@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { globalFetch } from '../../../shared/api';
-import { selectedSpot, useSpotDetails, useSpotMetrics } from '../../../entities/spot';
-
-const { refetch: refetchMetrics } = useSpotMetrics(() => selectedSpot.id, { immediate: false });
-const { refetch: refetchDetails } = useSpotDetails(() => selectedSpot.id, { immediate: false });
+import { selectedSpot } from '../../../entities/spot';
 
 const handleButtonClick = async () => {
-  await Promise.all([refetchMetrics(), refetchDetails()]);
+  selectedSpot.reset();
+
+  await selectedSpot.fetchMetrics();
 };
 </script>
 
