@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import { selectedSpot } from '../../../entities/spot';
 import { daytime } from '../../../shared/lib';
+import { SpotMetrics } from '../../../shared/api';
 
 import ArrowIcon from './arrow.svg';
+
+const metrics = computed<Array<SpotMetrics>>(() => [...selectedSpot.metrics].reverse());
 </script>
 
 <template>
@@ -15,7 +20,7 @@ import ArrowIcon from './arrow.svg';
       <th>p</th>
     </tr>
 
-    <tr v-for="item in selectedSpot.metrics" :key="item.time">
+    <tr v-for="item in metrics" :key="item.time">
       <td>{{ daytime(new Date(item.time)) }}</td>
       <td class="table__windSpeed">
         <ArrowIcon
