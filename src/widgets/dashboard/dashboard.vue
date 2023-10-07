@@ -5,17 +5,20 @@ import { WindSpeedChart } from '../../features/metric-at-spot/wind-speed';
 import { TemperatureChart } from '../../features/metric-at-spot/temperature';
 import { PressureChart } from '../../features/metric-at-spot/pressure';
 import { LastUpdated } from '../../features/refresh-data';
-import { selectedSpot, useSpotMetrics, TabLayout } from '../../entities/spot';
+import { selectedSpot, useSpotMetrics } from '../../entities/spot';
+import { fetchMetrics } from '../../shared/api';
+import { TabLayout } from '../../shared/ui';
 
 useSpotMetrics();
 </script>
 
 <template>
   <TabLayout
-    :loading="selectedSpot.loadingState === 'pending'"
+    :loading="fetchMetrics.loadingState === 'pending'"
     :empty="selectedSpot.metrics.length === 0"
+    :error="fetchMetrics.error"
   >
-    <LastUpdated :updatedAt="selectedSpot.updatedAt" />
+    <LastUpdated :updatedAt="fetchMetrics.lastResponseTime" />
 
     <AzimuthChart :metrics="selectedSpot.metrics" />
 

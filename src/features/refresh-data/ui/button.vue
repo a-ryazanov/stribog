@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { globalFetch } from '../../../shared/api';
+import { computed } from 'vue';
+
 import { selectedSpot } from '../../../entities/spot';
+import { fetchMetrics, fetchDetails } from '../../../shared/api';
 
 const handleButtonClick = async () => {
-  selectedSpot.reset();
+  const id = selectedSpot.id;
 
-  await selectedSpot.fetchMetrics();
+  if (id !== null) {
+    await Promise.all([fetchMetrics.execute(id), fetchDetails.execute(id)]);
+  }
 };
+
+const isDisabled = computed(() =>
+  [fetchMetrics.loadingState, fetchDetails.loadingState].some((state) => state === 'pending'),
+);
 </script>
 
 <template>
-  <button
-    @click="handleButtonClick"
-    :disabled="globalFetch.state !== 'done'"
-    class="refreshButton"
-    type="button"
-  >
+  <button @click="handleButtonClick" :disabled="isDisabled" class="refreshButton" type="button">
     Обновить
   </button>
 </template>

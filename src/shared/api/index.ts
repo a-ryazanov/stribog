@@ -1,62 +1,86 @@
 import { reactive } from 'vue';
 
-import { Spot, SpotMetrics, SpotDetails, SpotSafetyLine, SpotSafetyLineStatus } from './types.ts';
+import {
+  Spot,
+  SpotMetrics,
+  SpotDetails,
+  SpotSafetyLine,
+  SpotSafetyLineStatus,
+  BaseQuery,
+} from './types.ts';
 
 const BASE_URL = import.meta.env.DEV
   ? 'https://cors-anywhere.herokuapp.com/http://193.124.125.33'
   : 'http://193.124.125.33';
 
-export const fetchSpots = async (): Promise<Array<Spot>> => {
-  globalFetch.setState('pending');
-
-  return fetch(`${BASE_URL}/spots`, { method: 'get' })
+export const fetchSpots = async (): Promise<Array<Spot>> =>
+  fetch(`${BASE_URL}/spots`, { method: 'get' })
     .then((response) => response.json())
-    .then((spots) => Object.keys(spots).map((id) => ({ id, name: spots[id] })))
-    .then((response) => {
-      globalFetch.setState('done');
+    .then((spots) => Object.keys(spots).map((id) => ({ id, name: spots[id] })));
 
-      return response;
-    });
-};
+interface FetchMetricsQuery extends BaseQuery<string, Array<SpotMetrics>> {}
 
-export const fetchMetrics = async (
-  id: string,
-  signal?: AbortSignal,
-): Promise<Array<SpotMetrics>> => {
-  globalFetch.setState('pending');
+export const fetchMetrics = reactive<FetchMetricsQuery>({
+  loadingState: 'idle',
+  lastResponseTime: null,
+  error: null,
+  async execute(id, signal) {
+    this.loadingState = 'pending';
 
-  return fetch(`${BASE_URL}/spots/${id}/metrics`, { method: 'get', signal })
-    .then((response) => response.json())
-    .then((response) => {
-      globalFetch.setState('done');
+    return fetch(`${BASE_URL}/spots/${id}/metrics`, { method: 'get', signal })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
 
-      return response;
-    });
-};
+        throw new Error(`${response.status} ${response.statusText}`);
+      })
+      .then((data: Array<SpotMetrics>) => {
+        this.lastResponseTime = new Date();
 
-export const fetchDetails = async (id: string, signal?: AbortSignal): Promise<SpotDetails> => {
-  globalFetch.setState('pending');
+        return data;
+      })
+      .catch((error: Error) => {
+        this.error = error.message;
 
-  return fetch(`${BASE_URL}/spots/${id}/details`, { method: 'get', signal })
-    .then((response) => response.json())
-    .then((response) => {
-      globalFetch.setState('done');
+        return [];
+      })
+      .finally(() => {
+        this.loadingState = 'done';
+      });
+  },
+});
 
-      return response;
-    });
-};
+interface FetchDetailsQuery extends BaseQuery<string, SpotDetails | null> {}
 
-type LoadingState = 'idle' | 'pending' | 'done';
+export const fetchDetails = reactive<FetchDetailsQuery>({
+  loadingState: 'idle',
+  lastResponseTime: null,
+  error: null,
+  async execute(id, signal) {
+    this.loadingState = 'pending';
 
-interface GlobalFetchState {
-  state: LoadingState;
-  setState: (state: LoadingState) => void;
-}
+    return fetch(`${BASE_URL}/spots/${id}/details`, { method: 'get', signal })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
 
-export const globalFetch = reactive<GlobalFetchState>({
-  state: 'idle',
-  setState: (state) => {
-    globalFetch.state = state;
+        throw new Error(`${response.status} ${response.statusText}`);
+      })
+      .then((data: SpotDetails) => {
+        this.lastResponseTime = new Date();
+
+        return data;
+      })
+      .catch((error: Error) => {
+        this.error = error.message;
+
+        return null;
+      })
+      .finally(() => {
+        this.loadingState = 'done';
+      });
   },
 });
 

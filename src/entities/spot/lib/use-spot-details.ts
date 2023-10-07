@@ -1,30 +1,30 @@
-import { ref, onDeactivated, watchEffect } from 'vue';
+import { onUnmounted, watchEffect } from 'vue';
+
+import { fetchDetails } from '../../../shared/api';
 
 import { selectedSpot } from '../model';
 
 export function useSpotDetails() {
-  const state = ref<'pending' | 'idle' | 'done'>('idle');
-
   let controller = new AbortController();
 
-  const fetchData = async () => {
-    state.value = 'pending';
-
-    await selectedSpot.fetchDetails(controller.signal).finally(() => {
-      state.value = 'done';
-      controller = new AbortController();
-    });
-  };
-
   watchEffect(async () => {
-    await fetchData();
-  });
+    const id = selectedSpot.id;
 
-  onDeactivated(() => {
-    if (selectedSpot.loadingState === 'pending') {
-      controller.abort();
+    if (id !== null && selectedSpot.details === null) {
+      await fetchDetails
+        .execute(id, controller.signal)
+        .then((response) => {
+          selectedSpot.setDetails(response);
+        })
+        .finally(() => {
+          controller = new AbortController();
+        });
     }
   });
 
-  return { state };
+  onUnmounted(() => {
+    if (fetchDetails.loadingState === 'pending') {
+      controller.abort();
+    }
+  });
 }

@@ -1,24 +1,32 @@
 <script setup lang="ts">
-import {
-  SpotMap,
-  SpotDescription,
-  useSpotDetails,
-  selectedSpot,
-  TabLayout,
-} from '../../entities/spot';
+import { computed } from 'vue';
 
-const { state } = useSpotDetails();
+import { LastUpdated } from '../../features/refresh-data';
+import { SpotMap, SpotDescription, useSpotDetails, selectedSpot } from '../../entities/spot';
+import { fetchDetails } from '../../shared/api';
+import { TabLayout } from '../../shared/ui';
+
+useSpotDetails();
+
+const isLoading = computed(
+  () => fetchDetails.loadingState === 'idle' || fetchDetails.loadingState === 'pending',
+);
 </script>
 
 <template>
-  <TabLayout :loading="state === 'pending'" :empty="selectedSpot.details === null">
+  <TabLayout
+    :loading="isLoading"
+    :empty="selectedSpot.details === null"
+    :error="fetchDetails.error"
+  >
+    <LastUpdated :updated-at="fetchDetails.lastResponseTime" />
+
     <SpotDescription :text="selectedSpot.details!.description" />
 
     <SpotMap
       v-if="selectedSpot.id !== null"
       :id="selectedSpot.id"
       :lines="selectedSpot.details!.safetyLines"
-      class="mapWidget"
     />
 
     <section class="details__footer">

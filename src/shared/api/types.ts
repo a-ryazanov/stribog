@@ -30,3 +30,10 @@ export interface SpotDetails {
   description: string;
   safetyLines: Array<SpotSafetyLine>;
 }
+
+export interface BaseQuery<Params, Response> {
+  loadingState: 'pending' | 'idle' | 'done';
+  lastResponseTime: Date | null;
+  error: string | null;
+  execute: (params: Params, signal?: AbortSignal) => Promise<Response>;
+}

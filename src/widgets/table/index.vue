@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { LastUpdated } from '../../features/refresh-data';
-import { selectedSpot, useSpotMetrics, TabLayout } from '../../entities/spot';
+import { selectedSpot, useSpotMetrics } from '../../entities/spot';
+import { fetchMetrics } from '../../shared/api';
+import { TabLayout } from '../../shared/ui';
 
 import SpotTable from './ui/table.vue';
 
@@ -9,10 +11,11 @@ useSpotMetrics();
 
 <template>
   <TabLayout
-    :loading="selectedSpot.loadingState === 'pending'"
+    :loading="fetchMetrics.loadingState === 'pending'"
     :empty="selectedSpot.metrics.length === 0"
+    :error="fetchMetrics.error"
   >
-    <LastUpdated :updatedAt="selectedSpot.updatedAt" class="tableSection__updatedAt" />
+    <LastUpdated :updatedAt="fetchMetrics.lastResponseTime" class="tableSection__updatedAt" />
 
     <SpotTable />
   </TabLayout>

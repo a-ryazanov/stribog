@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, KeepAlive, type Component } from 'vue';
+import { ref, type Component } from 'vue';
 
 export interface TabView {
   name: string;
@@ -35,9 +35,7 @@ const activeTab = ref(props.tabs[0]);
       </template>
     </header>
 
-    <KeepAlive>
-      <component :is="activeTab.component" />
-    </KeepAlive>
+    <component :is="activeTab.component" />
   </section>
 </template>
 
