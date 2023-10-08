@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 import { SpotSafetyLine } from '../../../shared/api';
 import { spotMaps } from '../lib/spot-maps.ts';
@@ -13,6 +13,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const mapImage = computed<string>(() => spotMaps[props.id]);
+const isReady = ref<boolean>(false);
 
 onMounted(() => {
   const canvas = canvasFactory('spot-map');
@@ -21,13 +22,16 @@ onMounted(() => {
 
   if (context !== null) {
     image.src = mapImage.value;
-    image.onload = () => drawMap({ canvas, context, image, lines: props.lines });
+    image.onload = () => {
+      drawMap({ canvas, context, image, lines: props.lines });
+      isReady.value = true;
+    };
   }
 });
 </script>
 
 <template>
-  <canvas id="spot-map" class="spotMap" />
+  <canvas v-show="isReady" id="spot-map" class="spotMap" />
 </template>
 
 <style scoped>

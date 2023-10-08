@@ -8,7 +8,13 @@ const handleButtonClick = async () => {
   const id = selectedSpot.id;
 
   if (id !== null) {
-    await Promise.all([fetchMetrics.execute(id), fetchDetails.execute(id)]);
+    const [metrics, details] = await Promise.all([
+      fetchMetrics.execute(id),
+      fetchDetails.execute(id),
+    ]);
+
+    selectedSpot.setMetrics(metrics);
+    selectedSpot.setDetails(details);
   }
 };
 
